@@ -1,0 +1,6 @@
+deviceId,timestamp,usage_hours,temperature,pressure,vibration,error_count,error_codes,maintenance_notes
+DEV-001,2023-06-01 08:00:00,120.5,32.1,105.2,0.15,0,,Normal operation
+DEV-001,2023-06-01 12:00:00,124.2,33.5,107.8,0.18,1,ERR201,Minor error detected
+DEV-001,2023-06-01 16:00:00,128.7,31.8,103.5,0.12,0,,Normal operation
+DEV-002,2023-06-01 09:00:00,450.2,45.5,155.7,0.65,3,ERR305,High temperature warning
+DEV-002,2023-06-01 13:00:00,455.8,47.2,158.3,0.72,2,ERR305,Temperature stabilizing
