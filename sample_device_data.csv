@@ -1,0 +1,6 @@
+device_id,usage_hours,temperature,pressure,vibration,error_count
+DEV-001,120.5,32.1,105.2,0.15,0
+DEV-002,450.2,45.5,155.7,0.65,3
+DEV-003,780.1,52.3,178.9,1.25,7
+DEV-004,85.3,29.8,98.4,0.08,0
+DEV-005,320.7,38.2,132.6,0.42,2

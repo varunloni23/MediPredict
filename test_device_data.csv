@@ -1,0 +1,6 @@
+usage_hours,temperature,pressure,vibration,error_count
+100,30,100,0.1,0
+500,45,150,0.5,3
+800,55,180,1.2,8
+200,35,120,0.3,1
+600,50,160,0.8,5

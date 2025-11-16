@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Detail Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Device Detail Component Test</h1>
+    <div id="device-info"></div>
+    
+    <script>
+        // Test function to simulate what the React component does
+        async function testDeviceDetail(deviceId) {
+            try {
+                // Fetch device details from API
+                const deviceResponse = await fetch(`http://localhost:8001/api/devices/${deviceId}`);
+                if (!deviceResponse.ok) {
+                    throw new Error('Failed to fetch device details');
+                }
+                const deviceData = await deviceResponse.json();
+                
+                // Fetch predictions for this device
+                const predictionsResponse = await fetch(`http://localhost:8001/api/predictions/device/${deviceData.device_id}`);
+                let predictionsData = [];
+                if (predictionsResponse.ok) {
+                    predictionsData = await predictionsResponse.json();
+                }
+                
+                // Display device information
+                const infoDiv = document.getElementById('device-info');
+                infoDiv.innerHTML = `
+                    <h2>${deviceData.name}</h2>
+                    <p><strong>Device ID:</strong> ${deviceData.device_id}</p>
+                    <p><strong>Type:</strong> ${deviceData.type}</p>
+                    <p><strong>Manufacturer:</strong> ${deviceData.manufacturer}</p>
+                    <p><strong>Model:</strong> ${deviceData.model}</p>
+                    <p><strong>Serial Number:</strong> ${deviceData.serial_number}</p>
+                    <h3>Predictions: ${predictionsData.length}</h3>
+                    ${predictionsData.map(pred => `
+                        <p>${pred.predicted_status} - Confidence: ${(pred.confidence_score * 100).toFixed(0)}%</p>
+                    `).join('')}
+                `;
+                
+                console.log('Device data:', deviceData);
+                console.log('Predictions:', predictionsData);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('device-info').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Test with different devices
+        const deviceIds = [1, 6, 7, 8]; // The numeric IDs from our test
+        
+        deviceIds.forEach(id => {
+            const button = document.createElement('button');
+            button.textContent = `Test Device ID ${id}`;
+            button.onclick = () => testDeviceDetail(id);
+            document.body.appendChild(button);
+            document.body.appendChild(document.createElement('br'));
+        });
+    </script>
+</body>
+</html>
