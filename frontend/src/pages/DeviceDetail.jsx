@@ -80,15 +80,22 @@ const DeviceDetail = () => {
     
     setLoadingExplanation(true)
     try {
+      console.log('Fetching explanation for device:', device.device_id)
       const response = await fetch(`http://localhost:8001/api/ml/explain/${device.device_id}`)
+      console.log('Response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('Explanation data received:', data)
         setExplanation(data)
       } else {
-        console.error('Failed to fetch explanation')
+        const errorText = await response.text()
+        console.error('Failed to fetch explanation:', response.status, errorText)
+        alert(`Failed to generate AI explanation: ${response.status} - ${errorText}`)
       }
     } catch (err) {
       console.error('Error fetching explanation:', err)
+      alert(`Error generating AI explanation: ${err.message}`)
     } finally {
       setLoadingExplanation(false)
     }
@@ -378,11 +385,12 @@ const DeviceDetail = () => {
                 These features have the most significant impact on the prediction:
               </p>
               <div className="space-y-3">
-                {Object.entries(explanation.feature_contributions).map(([feature, data]) => (
+                {explanation.feature_contributions && 
+                  Object.entries(explanation.feature_contributions).map(([feature, data]) => (
                   <div key={feature} className="border rounded-lg p-3 bg-gray-50">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium capitalize text-gray-900">
-                        {feature.replace('_', ' ')}
+                        {feature.replace(/_/g, ' ')}
                       </span>
                       <span className="text-sm text-gray-600">
                         Importance: {(data.importance * 100).toFixed(1)}%
