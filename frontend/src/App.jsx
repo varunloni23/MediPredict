@@ -19,7 +19,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/devices" element={<DeviceList />} />
-            <Route path="/device/:id" element={<DeviceDetail />} />
+            <Route path="/devices/:id" element={<DeviceDetail />} />
             <Route path="/upload" element={<UploadData />} />
             <Route path="/reports" element={<Reports />} />
           </Routes>

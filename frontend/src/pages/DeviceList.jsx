@@ -15,7 +15,7 @@ const DeviceList = () => {
     try {
       setLoading(true)
       setError('')
-      
+
       // Fetch devices from the actual API
       const response = await fetch('http://localhost:8001/api/devices/')
       if (response.ok) {
@@ -246,7 +246,7 @@ const DeviceList = () => {
                     </div>
                     <div>
                       <Link
-                        to={`/device/${device.id}`}
+                        to={`/devices/${device.id}`}
                         className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200"
                       >
                         View Details

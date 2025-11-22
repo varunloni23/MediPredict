@@ -18,7 +18,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true)
-        
+
         // Fetch devices from the API
         const devicesResponse = await fetch('http://localhost:8001/api/devices/')
         let devices = []
@@ -26,14 +26,14 @@ const Dashboard = () => {
           devices = await devicesResponse.json()
           setTotalDevices(devices.length)
         }
-        
+
         // Fetch predictions from the API
         const predictionsResponse = await fetch('http://localhost:8001/api/predictions/')
         let predictions = []
         if (predictionsResponse.ok) {
           predictions = await predictionsResponse.json()
         }
-        
+
         // Calculate device stats based on predictions
         const healthyDevices = devices.filter(device => {
           const devicePredictions = predictions.filter(p => p.device_id === device.device_id)
@@ -42,7 +42,7 @@ const Dashboard = () => {
           }
           return false // Default to not healthy if no predictions
         }).length
-        
+
         const atRiskDevices = devices.filter(device => {
           const devicePredictions = predictions.filter(p => p.device_id === device.device_id)
           if (devicePredictions.length > 0) {
@@ -50,7 +50,7 @@ const Dashboard = () => {
           }
           return false
         }).length
-        
+
         const needsMaintenanceDevices = devices.filter(device => {
           const devicePredictions = predictions.filter(p => p.device_id === device.device_id)
           if (devicePredictions.length > 0) {
@@ -58,10 +58,10 @@ const Dashboard = () => {
           }
           return false
         }).length
-        
+
         setDevicesAtRisk(atRiskDevices)
         setDevicesNeedsMaintenance(needsMaintenanceDevices)
-        
+
         // Set device stats for pie chart
         const deviceStatsData = [
           { name: 'Healthy', value: healthyDevices },
@@ -69,7 +69,7 @@ const Dashboard = () => {
           { name: 'Needs Maintenance', value: needsMaintenanceDevices },
         ]
         setDeviceStats(deviceStatsData)
-        
+
         // For prediction trends, we'll use mock data for now
         // In a real application, you would aggregate predictions by date
         const mockPredictionData = [
@@ -81,7 +81,7 @@ const Dashboard = () => {
           { date: '2023-06', healthy: 41, atRisk: 13, needsMaintenance: 6 },
         ]
         setPredictionStats(mockPredictionData)
-        
+
         // Set recent alerts (latest predictions)
         const recentPredictions = predictions
           .sort((a, b) => new Date(b.prediction_timestamp) - new Date(a.prediction_timestamp))
@@ -96,7 +96,7 @@ const Dashboard = () => {
             }
           })
         setRecentAlerts(recentPredictions)
-        
+
         // Fetch explainable AI insights for at-risk and maintenance devices
         const problemDevices = devices.filter(device => {
           const devicePredictions = predictions.filter(p => p.device_id === device.device_id)
@@ -126,7 +126,7 @@ const Dashboard = () => {
 
         const insights = (await Promise.all(insightsPromises)).filter(insight => insight !== null)
         setExplainableInsights(insights)
-        
+
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
         // Fallback to mock data if API calls fail
@@ -136,7 +136,7 @@ const Dashboard = () => {
           { name: 'Needs Maintenance', value: 8 },
         ]
         setDeviceStats(mockDeviceStats)
-        
+
         const mockPredictionData = [
           { date: '2023-01', healthy: 40, atRisk: 10, needsMaintenance: 5 },
           { date: '2023-02', healthy: 42, atRisk: 9, needsMaintenance: 6 },
@@ -146,11 +146,11 @@ const Dashboard = () => {
           { date: '2023-06', healthy: 41, atRisk: 13, needsMaintenance: 6 },
         ]
         setPredictionStats(mockPredictionData)
-        
+
         setTotalDevices(65) // Keep mock value if API fails
         setDevicesAtRisk(12)
         setDevicesNeedsMaintenance(8)
-        
+
         const mockAlerts = [
           {
             deviceId: 'DEV-00123',
@@ -170,7 +170,7 @@ const Dashboard = () => {
         setLoading(false)
       }
     }
-    
+
     fetchData()
   }, [])
 
@@ -211,7 +211,7 @@ const Dashboard = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-medium text-gray-900 mb-2">Total Devices</h3>
@@ -265,7 +265,7 @@ const Dashboard = () => {
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
+              <XAxis dataKey="date" tick={false} height={10} />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -331,7 +331,7 @@ const Dashboard = () => {
             <h2 className="text-2xl font-bold text-gray-900">🤖 AI Insights & Recommendations</h2>
           </div>
           <p className="text-sm text-gray-600 mb-6">AI-powered explanations showing why devices are at risk and what actions to take</p>
-          
+
           <div className="space-y-6">
             {explainableInsights.map((insight, index) => (
               <div key={index} className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
@@ -352,8 +352,8 @@ const Dashboard = () => {
                     <span className="text-sm font-bold text-blue-600">{(insight.confidence * 100).toFixed(1)}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-blue-600 h-2.5 rounded-full" 
+                    <div
+                      className="bg-blue-600 h-2.5 rounded-full"
                       style={{ width: `${insight.confidence * 100}%` }}
                     ></div>
                   </div>
@@ -368,7 +368,7 @@ const Dashboard = () => {
                     Failure Reasons (Top Risk Factors)
                   </h4>
                   <div className="space-y-2">
-                    {insight.feature_contributions && insight.feature_contributions.slice(0, 3).map((feature, idx) => (
+                    {insight.feature_contributions && (Array.isArray(insight.feature_contributions) ? insight.feature_contributions : Object.entries(insight.feature_contributions).map(([feature, contribution]) => ({ feature, contribution }))).slice(0, 3).map((feature, idx) => (
                       <div key={idx} className="bg-red-50 p-3 rounded-md border border-red-200">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-sm font-medium text-gray-800 capitalize">
@@ -383,8 +383,8 @@ const Dashboard = () => {
                           {feature.interpretation && ` - ${feature.interpretation}`}
                         </div>
                         <div className="w-full bg-red-200 rounded-full h-1.5 mt-2">
-                          <div 
-                            className="bg-red-600 h-1.5 rounded-full" 
+                          <div
+                            className="bg-red-600 h-1.5 rounded-full"
                             style={{ width: `${feature.contribution * 100}%` }}
                           ></div>
                         </div>
@@ -430,7 +430,7 @@ const Dashboard = () => {
 
                 {/* View Details Link */}
                 <div className="mt-4 text-right">
-                  <Link 
+                  <Link
                     to={`/devices/${insight.deviceId}`}
                     className="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center"
                   >

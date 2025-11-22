@@ -18,7 +18,7 @@ const DeviceDetail = () => {
       try {
         setLoading(true)
         setError('')
-        
+
         // Fetch device details from API
         const deviceResponse = await fetch(`http://localhost:8001/api/devices/${id}`)
         if (!deviceResponse.ok) {
@@ -30,16 +30,16 @@ const DeviceDetail = () => {
           throw new Error('Failed to fetch device details')
         }
         const deviceData = await deviceResponse.json()
-        
+
         // Set device data
         setDevice(deviceData)
-        
+
         // Fetch device data points (for metrics chart)
         // Note: In a real application, you would have an endpoint to fetch actual device data
         // For now, we'll generate some sample data based on the device
         const sampleDeviceData = generateSampleDeviceData(deviceData.device_id)
         setDeviceData(sampleDeviceData)
-        
+
         // Fetch predictions for this device
         const predictionsResponse = await fetch(`http://localhost:8001/api/predictions/device/${deviceData.device_id}`)
         if (predictionsResponse.ok) {
@@ -69,7 +69,7 @@ const DeviceDetail = () => {
         setLoading(false)
       }
     }
-    
+
     if (id) {
       fetchDeviceData()
     }
@@ -77,13 +77,13 @@ const DeviceDetail = () => {
 
   const fetchExplanation = async () => {
     if (!device) return
-    
+
     setLoadingExplanation(true)
     try {
       console.log('Fetching explanation for device:', device.device_id)
       const response = await fetch(`http://localhost:8001/api/ml/explain/${device.device_id}`)
       console.log('Response status:', response.status)
-      
+
       if (response.ok) {
         const data = await response.json()
         console.log('Explanation data received:', data)
@@ -105,7 +105,7 @@ const DeviceDetail = () => {
   const generateSampleDeviceData = (deviceId) => {
     // Create different data patterns based on device ID
     const baseValue = deviceId ? deviceId.charCodeAt(0) || 10 : 10
-    
+
     return [
       { timestamp: '2023-06-01', usageHours: baseValue * 12, temperature: 25 + (baseValue % 15), pressure: 100 + (baseValue % 20), vibration: 0.1 + (baseValue % 5) * 0.05, errorCount: Math.max(0, (baseValue % 4) - 1) },
       { timestamp: '2023-06-02', usageHours: baseValue * 12.5, temperature: 27 + (baseValue % 15), pressure: 102 + (baseValue % 20), vibration: 0.12 + (baseValue % 5) * 0.05, errorCount: Math.max(0, (baseValue % 4) - 1) },
@@ -265,7 +265,7 @@ const DeviceDetail = () => {
                 margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="timestamp" angle={-45} textAnchor="end" height={60} />
+                <XAxis dataKey="timestamp" tick={false} height={10} />
                 <YAxis />
                 <Tooltip />
                 <Legend />
@@ -366,10 +366,9 @@ const DeviceDetail = () => {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className={`h-2 rounded-full ${
-                          className === 'healthy' ? 'bg-green-500' :
-                          className === 'at_risk' ? 'bg-yellow-500' : 'bg-red-500'
-                        }`}
+                        className={`h-2 rounded-full ${className === 'healthy' ? 'bg-green-500' :
+                            className === 'at_risk' ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
                         style={{ width: `${probability * 100}%` }}
                       ></div>
                     </div>
@@ -385,37 +384,37 @@ const DeviceDetail = () => {
                 These features have the most significant impact on the prediction:
               </p>
               <div className="space-y-3">
-                {explanation.feature_contributions && 
+                {explanation.feature_contributions &&
                   Object.entries(explanation.feature_contributions).map(([feature, data]) => (
-                  <div key={feature} className="border rounded-lg p-3 bg-gray-50">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium capitalize text-gray-900">
-                        {feature.replace(/_/g, ' ')}
-                      </span>
-                      <span className="text-sm text-gray-600">
-                        Importance: {(data.importance * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Current Value:</span>
-                      <span className="text-sm font-semibold text-gray-900">
-                        {typeof data.value === 'number' ? data.value.toFixed(2) : data.value}
-                        {feature === 'temperature' && '°C'}
-                        {feature === 'pressure' && ' PSI'}
-                        {feature === 'vibration' && ' Hz'}
-                        {feature === 'usage_hours' && ' hrs'}
-                      </span>
-                    </div>
-                    <div className="mt-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full"
-                          style={{ width: `${data.importance * 100}%` }}
-                        ></div>
+                    <div key={feature} className="border rounded-lg p-3 bg-gray-50">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium capitalize text-gray-900">
+                          {feature.replace(/_/g, ' ')}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          Importance: {(data.importance * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Current Value:</span>
+                        <span className="text-sm font-semibold text-gray-900">
+                          {typeof data.value === 'number' ? data.value.toFixed(2) : data.value}
+                          {feature === 'temperature' && '°C'}
+                          {feature === 'pressure' && ' PSI'}
+                          {feature === 'vibration' && ' Hz'}
+                          {feature === 'usage_hours' && ' hrs'}
+                        </span>
+                      </div>
+                      <div className="mt-2">
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{ width: `${data.importance * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
 
